@@ -6,14 +6,33 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
-        android:text="jni崩溃"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:id="@+id/jniCrash"
-        android:layout_width="100dp"
-        android:layout_height="100dp"/>
+        app:layout_constraintVertical_bias="0.5"
+        tools:context=".MainActivity">
+
+        <Button
+            android:id="@+id/javaCrash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Java_crash"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/nativeCrash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="native_crash"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

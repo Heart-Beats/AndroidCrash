@@ -1,3 +1,6 @@
+apply from: './commonGradle/gradle_config_optimize.gradle'
+
 include ':app'
-include ':breakpad'
-rootProject.name = "NativeCrash2Java"
+include ':breakpad-android'
+include ':android-crash'
+rootProject.name = "AndroidCrash"

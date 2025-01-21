@@ -58,9 +58,9 @@
 
 
 ~~~bash
-2022-02-14 11:33:08.598 30228-30253/com.babyte.banativecrash E/crash:  
+2022-02-14 11:33:08.598 30228-30253/com.babyte.banativecrash E/androidCrash:  
     /data/user/0/com.babyte.banativecrash/cache/f1474006-60ca-40f4-c9d8e89a-47e90c2e.dmp
-2022-02-14 11:33:08.599 30228-30253/com.babyte.banativecrash E/crash:  
+2022-02-14 11:33:08.599 30228-30253/com.babyte.banativecrash E/androidCrash:  
     Operating system: Android 28 Linux 4.4.146 #37 SMP PREEMPT Wed Jan 20 18:26:59 CST 2021
     CPU: aarch64 (8 core)
 
@@ -69,7 +69,7 @@
     Crash pc: 0000000000000650
     Crash so: /data/app/com.babyte.banativecrash-ptLzOQ_6UYz-W3Vgyact8A==/lib/arm64/libnative-lib.so(arm64)
     Crash method: _Z5Crashv
-2022-02-14 11:33:08.602 30228-30253/com.babyte.banativecrash E/crash:  
+2022-02-14 11:33:08.602 30228-30253/com.babyte.banativecrash E/androidCrash:  
     Thread[name:DefaultDispatch] (NOTE: linux thread name length limit is 15 characters)
     #00 pc 0000000000000650  /data/app/com.babyte.banativecrash-ptLzOQ_6UYz-W3Vgyact8A==/lib/arm64/libnative-lib.so (Crash()+20)
     #01 pc 0000000000000670  /data/app/com.babyte.banativecrash-ptLzOQ_6UYz-W3Vgyact8A==/lib/arm64/libnative-lib.so (Java_com_babyte_banativecrash_MainActivity_nativeCrash+20)
@@ -78,7 +78,7 @@
     #04 pc 00000000000cf740  /system/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+200)
     #05 pc 00000000002823b8  /system/lib64/libart.so (offset 0xc1000)
 ...
-2022-02-14 11:33:08.603 30228-30253/com.babyte.banativecrash E/crash:  
+2022-02-14 11:33:08.603 30228-30253/com.babyte.banativecrash E/androidCrash:  
     Thread[DefaultDispatcher-worker-1,5,main]
         at com.babyte.banativecrash.MainActivity.nativeCrash(Native Method)
         at com.babyte.banativecrash.MainActivity$onCreate$2$1.invokeSuspend(MainActivity.kt:39)
@@ -134,7 +134,7 @@ allprojects {
 ~~~groovy
 dependencies {   
     //添加这一行,releaseVersionCode填最新的版本
-	implementation 'io.github.BAByte:native-crash:releaseVersionCode@aar'
+	implementation 'io.github.BAByte:native-androidCrash:releaseVersionCode@aar'
 }
 ~~~
 
