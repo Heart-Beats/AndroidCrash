@@ -1,4 +1,4 @@
-package com.babyte.banativecrash
+package com.hl.android.crash.demo
 
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.File
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -36,7 +37,7 @@ class MainActivity : AppCompatActivity() {
             .build()
 
         findViewById<Button>(R.id.javaCrash).setOnClickListener {
-            GlobalScope.launch(Dispatchers.IO) {
+            thread(name = "测试崩溃线程") {
                 androidCrash.javaCrashTest()
             }
         }

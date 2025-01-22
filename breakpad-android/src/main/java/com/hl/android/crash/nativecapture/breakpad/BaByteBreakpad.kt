@@ -1,6 +1,6 @@
-package com.babyte.breakpad
+package com.hl.android.crash.nativecapture.breakpad
 
-import com.babyte.breakpad.callback.NativeCrashCallback
+import com.hl.android.crash.nativecapture.breakpad.callback.NativeCrashCallback
 
 
 /**

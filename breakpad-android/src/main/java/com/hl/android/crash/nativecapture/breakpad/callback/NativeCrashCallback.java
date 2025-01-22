@@ -1,4 +1,4 @@
-package com.babyte.breakpad.callback;
+package com.hl.android.crash.nativecapture.breakpad.callback;
 
 /**
  * @author 张磊  on  2025/01/20 at 19:23
@@ -9,6 +9,7 @@ public interface NativeCrashCallback {
     void onCrash(
             String miniDumpPath,
             String crashInfo,
-            String nativeThreadTrack, String crashThreadName
+            String nativeThreadTrack,
+            String crashThreadName
     );
 }

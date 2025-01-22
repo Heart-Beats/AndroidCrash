@@ -188,7 +188,7 @@ void dump_and_2_java(JNIEnv *env, jstring path_) {
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_babyte_breakpad_BaByteBreakpad_initBreakpadNative(JNIEnv *env, jobject thiz, jstring path_,
+Java_com_hl_android_crash_nativecapture_breakpad_BaByteBreakpad_initBreakpadNative(JNIEnv *env, jobject thiz, jstring path_,
                                                            jobject callback) {
     initCallbackThreadHanlder();
     initCallbackObject(env, callback);
