@@ -1,31 +1,11 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-apply from: "config.gradle"
-
-buildscript {
-    ext.kotlin_version = "1.8.20"
-    ext.dokka_version = '1.4.10.2'
-    repositories {
-        google()
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.0'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokka_version"
-
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
+plugins {
+    id 'com.android.application' version '7.4.0' apply false
+    id 'com.android.library' version '7.4.0' apply false
+    id 'org.jetbrains.kotlin.android' version '1.8.20' apply false
+    id 'com.vanniktech.maven.publish' version '0.27.0' apply false
 }
 
-allprojects {
-    repositories {
-        google()
-        jcenter()
-        mavenCentral()
-    }
-}
+apply from: 'config.gradle'
 
 task clean(type: Delete) {
     delete rootProject.buildDir

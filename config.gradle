@@ -1,4 +1,6 @@
 ext {
+    module_group = "com.hl"
+
     android = [
             compileSdkVersion: 34,
             minSdkVersion    : 21,

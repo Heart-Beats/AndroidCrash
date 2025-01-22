@@ -3,6 +3,10 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+ext.module_name = "android-crash"
+
+apply from: '../commonGradle/MavenPublish.gradle'
+
 android {
     namespace 'com.hl.android.crash'
     compileSdk rootProject.android.compileSdkVersion
