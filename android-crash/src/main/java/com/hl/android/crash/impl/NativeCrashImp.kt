@@ -4,7 +4,7 @@ import android.content.Context
 import com.hl.android.crash.callback.OnCrashListener
 import com.hl.android.crash.callback.OnNativeCrashListener
 import com.hl.android.crash.data.NativeCrashInfo
-import com.hl.android.crash.nativecapture.breakpad.BaByteBreakpad
+import com.hl.android.crash.nativecapture.breakpad.Breakpad
 import java.io.File
 
 class NativeCrashImp : ICrash {
@@ -30,7 +30,7 @@ class NativeCrashImp : ICrash {
 	 * @param nativeCrashWholeCallBack 将 minidump文件路径，native 层的异常信息，java层异常信息回调给开发者
 	 */
 	private fun initBreakpad(miniDumpDir: String?, nativeCrashWholeCallBack: (NativeCrashInfo) -> Unit) {
-		BaByteBreakpad.initBreakpadNative(miniDumpDir) { miniDumpPath, crashInfo, nativeThreadTrack, crashThreadName ->
+		Breakpad.initBreakpadNative(miniDumpDir) { miniDumpPath, crashInfo, nativeThreadTrack, crashThreadName ->
 			val nativeCrashInfo =
 				NativeCrashInfo(miniDumpDir ?: miniDumpPath, crashInfo, nativeThreadTrack, getStackString(crashThreadName))
 			nativeCrashWholeCallBack(nativeCrashInfo)

@@ -19,6 +19,21 @@ android {
     }
 
     buildTypes {
+        debug{
+            // 是否需要混淆，默认使用 R8 优化
+            def needMinify = false
+
+            if (needMinify) {
+                // 是否开启调试， 混淆打开时 debug 调试需关闭，否则混淆无效
+                debuggable !needMinify
+
+                minifyEnabled true
+                zipAlignEnabled true
+                shrinkResources true
+                proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            }
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
