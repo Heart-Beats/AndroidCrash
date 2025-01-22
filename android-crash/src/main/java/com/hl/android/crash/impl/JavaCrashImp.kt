@@ -1,10 +1,12 @@
 package com.hl.android.crash.impl
 
 import android.content.Context
+import android.os.Process
 import android.util.Log
 import com.hl.android.crash.callback.OnCrashListener
 import com.hl.android.crash.callback.OnJavaCrashListener
 import com.hl.android.crash.data.JavaCrashInfo
+import com.hl.android.crash.utils.ProcessUtil
 import java.io.File
 import java.io.FileWriter
 import java.io.PrintWriter
@@ -28,20 +30,20 @@ class JavaCrashImp : ICrash {
 	override fun init(context: Context, crashLogDir: String?, onCrashListener: OnCrashListener) {
 		val onJavaCrashListener = onCrashListener as OnJavaCrashListener
 
-		handleUncaughtException(crashLogDir, onJavaCrashListener)
+		handleUncaughtException(context, crashLogDir, onJavaCrashListener)
 	}
 
 
 	/**
 	 * 处理未捕获的异常
 	 */
-	private fun handleUncaughtException(crashLogDir: String?, javaCrashCallBack: OnJavaCrashListener) {
+	private fun handleUncaughtException(context: Context, crashLogDir: String?, javaCrashCallBack: OnJavaCrashListener) {
 		// 获取系统默认或已设置的 UncaughtException 处理器
 		val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
 
 		Thread.setDefaultUncaughtExceptionHandler { thread: Thread, ex: Throwable? ->
 			try {
-				handleException(ex, crashLogDir) { crashLogPath, stackTraceString, throwable ->
+				handleException(context, thread, ex, crashLogDir) { crashLogPath, stackTraceString, throwable ->
 					val javaCrashInfo = JavaCrashInfo(crashLogPath, stackTraceString, throwable)
 					javaCrashCallBack.onCrash(javaCrashInfo)
 				}
@@ -58,7 +60,7 @@ class JavaCrashImp : ICrash {
 	/**
 	 * 自定义错误处理,收集错误信息
 	 */
-	private fun handleException(ex: Throwable?, crashLogDir: String?, javaCrashCallBack: javaCrashCallBack) {
+	private fun handleException(context: Context, thread: Thread, ex: Throwable?, crashLogDir: String?, javaCrashCallBack: javaCrashCallBack) {
 		if (ex == null) {
 			return
 		}
@@ -80,10 +82,10 @@ class JavaCrashImp : ICrash {
 			}.absolutePath
 
 			// 保存日志文件
-			saveCrashInfo2File(ex, crashLogPath)
+			saveCrashInfo2File(context, thread, ex, crashLogPath)
 		}
 
-		val stackTraceString = getStackTraceAsString(ex)
+		val stackTraceString = getStackTraceAsString(context, thread, ex)
 
 		javaCrashCallBack(crashLogPath, stackTraceString, ex)
 	}
@@ -101,10 +103,12 @@ class JavaCrashImp : ICrash {
 	/**
 	 * 保存堆栈错误信息到文件中
 	 */
-	private fun saveCrashInfo2File(ex: Throwable, filePath: String) {
+	private fun saveCrashInfo2File(context: Context, thread: Thread, ex: Throwable, filePath: String) {
 		try {
 			FileWriter(filePath, true).use { fileWriter ->
 				PrintWriter(fileWriter).use { printWriter ->
+					printWriter.println("FATAL EXCEPTION: ${thread.name}")
+					printWriter.println("Process: ${ProcessUtil.getCurrentProcessName(context)}, PID: ${Process.myPid()} ")
 
 					// 将异常堆栈信息写入文件
 					ex.printStackTrace(printWriter)
@@ -121,12 +125,14 @@ class JavaCrashImp : ICrash {
 	/**
 	 * 获取堆栈错误信息
 	 */
-	private fun getStackTraceAsString(ex: Throwable): String {
+	private fun getStackTraceAsString(context: Context, thread: Thread, ex: Throwable): String {
 		var stackTraceInfo = ""
 
 		try {
 			StringWriter().use { stringWriter ->
 				PrintWriter(stringWriter).use { printWriter ->
+					printWriter.println("FATAL EXCEPTION: ${thread.name}")
+					printWriter.println("Process: ${ProcessUtil.getCurrentProcessName(context)}, PID: ${Process.myPid()} ")
 
 					// 将堆栈信息写入到 StringWriter
 					ex.printStackTrace(printWriter)
