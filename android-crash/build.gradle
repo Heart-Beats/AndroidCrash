@@ -1,6 +1,8 @@
-plugins {
-    id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
+apply plugin: 'com.android.library'
+apply plugin: 'org.jetbrains.kotlin.android'
+
+if (isPublishAar) {
+    apply plugin: 'com.kezong.fat-aar'
 }
 
 ext.module_name = "android-crash"
@@ -50,6 +52,41 @@ android {
     }
 }
 
+tasks.whenTaskAdded { Task task ->
+    // 注意：如果是有多个 flavor，则为 merge“Flavor”DebugNativeLibs 的形式
+    String taskName = task.name
+
+    if (taskName.matches('^pre.*[(Debug)|(Release)]Embed$')) {
+        // fataar 编译之前需要清除之前的编译产物，否则会有问题
+        Task cleanTask = project.getTasksByName('clean', false).first()
+        task.dependsOn(cleanTask)
+        task.mustRunAfter(cleanTask)
+    }
+
+    //    if (taskName.matches('^assemble.*[(Debug)|(Release)]$')) {
+    //        task.doLast {
+    //            println "------------------- ${taskName} end -------------------"
+    //
+    //            // 将打包生成的 aar 复制到 demo 的 libs 文件夹中
+    //            def buildType = taskName.toLowerCase().split('assemble').last()
+    //
+    //            def buildAarName = sdk_aar_name
+    //            def outputAar = new File(project.buildDir, "outputs/aar/$buildAarName")
+    //            def appLibs = new File(project(':app').projectDir, "libs")
+    //
+    //            println "------------ 开始拷贝 ${outputAar} 到 ${appLibs} 下  ----------"
+    //            copy {
+    //                from outputAar
+    //                into appLibs
+    //            }
+    //        }
+    //    }
+}
+
 dependencies {
-    implementation project(":breakpad-android")
+    if (isPublishAar) {
+        embed project(":breakpad-android")
+    } else {
+        implementation project(":breakpad-android")
+    }
 }
