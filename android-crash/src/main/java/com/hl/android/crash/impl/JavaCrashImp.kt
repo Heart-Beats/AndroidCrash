@@ -74,7 +74,7 @@ class JavaCrashImp : ICrash {
 				}
 			}
 
-			val time = getNowFormatTime()
+			val time = getNowFormatDay()
 			crashLogPath = File(crashLogDir, "crash_$time.log").also {
 				if (!it.exists()) {
 					it.createNewFile()
@@ -88,6 +88,16 @@ class JavaCrashImp : ICrash {
 		val stackTraceString = getStackTraceAsString(context, thread, ex)
 
 		javaCrashCallBack(crashLogPath, stackTraceString, ex)
+	}
+
+	/**
+	 * 获取现在格式化时间字符串
+	 */
+	private fun getNowFormatDay(): String {
+		// 用于格式化日期,作为日志文件名的一部分
+		val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+		val time = formatter.format(Date())
+		return time
 	}
 
 	/**
