@@ -3,7 +3,12 @@ plugins {
     id 'kotlin-android'
 }
 
+ext.module_name = "breakpad-android"
+
+apply from: '../commonGradle/MavenPublish.gradle'
+
 android {
+    namespace 'com.hl.android.crash.nativecapture'
     compileSdk rootProject.android.compileSdkVersion
 
     defaultConfig {

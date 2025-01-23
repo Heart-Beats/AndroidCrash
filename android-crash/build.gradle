@@ -1,10 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'org.jetbrains.kotlin.android'
 
-if (isPublishAar) {
-    apply plugin: 'com.kezong.fat-aar'
-}
-
 ext.module_name = "android-crash"
 
 apply from: '../commonGradle/MavenPublish.gradle'
@@ -84,8 +80,8 @@ tasks.whenTaskAdded { Task task ->
 }
 
 dependencies {
-    if (isPublishAar) {
-        embed project(":breakpad-android")
+    if (isUseRemote) {
+        implementation "${rootProject.ext.module_group}:breakpad-android:${rootProject.ext.getPublishVersion()}"
     } else {
         implementation project(":breakpad-android")
     }

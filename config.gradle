@@ -1,5 +1,15 @@
 ext {
-    module_group = "com.hl"
+    module_group = "io.github.heart-beats.crash"
+
+    ext {
+        getPublishVersion = {
+            def VERSION_PREFIX = ''
+            def VERSION_NAME = version
+            def VERSION_SUFFIX = isPublishRelease.toBoolean() ? '' : '-SNAPSHOT'
+
+            return VERSION_PREFIX + VERSION_NAME + VERSION_SUFFIX
+        }
+    }
 
     android = [
             compileSdkVersion: 34,

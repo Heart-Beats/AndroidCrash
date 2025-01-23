@@ -1,37 +1,31 @@
 apply plugin: 'com.vanniktech.maven.publish'
 
-//import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
-import com.vanniktech.maven.publish.SonatypeHost
+apply plugin: 'signing'
 
-ext {
-    getPublishVersion = {
-        def VERSION_PREFIX = ''
-        def VERSION_NAME = version
-        def VERSION_SUFFIX = isPublishRelease.toBoolean() ? '' : '-SNAPSHOT'
-
-        return VERSION_PREFIX + VERSION_NAME + VERSION_SUFFIX
-    }
+signing {
+    useGpgCmd() //使用 gpg-agent
+    sign publishing.publications
 }
-
-println "version--------->${project.ext.getPublishVersion()}"
 
 
 afterEvaluate {
     mavenPublishing {
 
-//        configure(new com.vanniktech.maven.publish.AndroidSingleVariantLibrary("release", true, true))
+        //    configure(new com.vanniktech.maven.publish.AndroidSingleVariantLibrary("release", true, true))
 
-        //    publishToMavenCentral(SonatypeHost.DEFAULT)
-        //    publishToMavenCentral(SonatypeHost.S01)
-        publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+        //    publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.DEFAULT)
+        //    publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.S01)
+        //    publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL)
+        publishToMavenCentral("CENTRAL_PORTAL")
 
-        signAllPublications()
+        //     signAllPublications()
 
         def moduleGroup = module_group
         def moduleName = module_name
-        def publishVersion = project.ext.getPublishVersion()
+        def publishVersion = rootProject.ext.getPublishVersion()
 
 
+        println "maven 依赖坐标 --------->${moduleGroup}:${moduleName}:${publishVersion}"
         coordinates(moduleGroup, moduleName, publishVersion)
 
         pom {
