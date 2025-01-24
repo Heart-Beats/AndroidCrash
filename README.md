@@ -1,61 +1,108 @@
-   * [BANativeCrash](#banativecrash)
-   * [现状](#现状)
-   * [设计意图](#设计意图)
-   * [整体流程](#整体流程)
-   * [功能介绍](#功能介绍)
-     * [定位到so中具体代码行示例](#定位到so中具体代码行示例)
-   * [接入方式](#接入方式)
-   * [初始化](#初始化)
-   * [示例项目](#示例项目)
-   * [致谢](#致谢)
+* [AndroidCrash](#AndroidCrash)
+* [接入使用](#接入使用)
+* [现状](#现状)
+* [设计意图](#设计意图)
+* [整体流程](#整体流程)
+* [功能介绍](#功能介绍)
+  * [定位到so中具体代码行示例](#定位到so中具体代码行示例)
+* [致谢](#致谢)
 
-# BANativeCrash
+# AndroidCrash
+
 图片要是无法显示，请使用梯子！！！
 
-[![image](https://img.shields.io/badge/Release-1.0.6-brightgreen)](https://github.com/BAByte/BANativeCrash/releases)	[![image](https://img.shields.io/badge/SupportAndroidVersion-5--12-gree.svg)](https://developer.android.com/studio/releases/platforms?hl=zh-cn)	![image](https://img.shields.io/badge/supportABI-arm64--v8a|armeabi--v7a|x86|x86--64-gree.svg)
+[![Maven Central Version](https://img.shields.io/maven-central/v/io.github.heart-beats.crash/android-crash?label=android-crash&style=for-the-badge)](https://repo1.maven.org/maven2/io/github/heart-beats/crash/android-crash/)	[![image](https://img.shields.io/badge/SupportAndroidVersion-5--12-gree.svg)](https://developer.android.com/studio/releases/platforms?hl=zh-cn)	![image](https://img.shields.io/badge/supportABI-arm64--v8a|armeabi--v7a|x86|x86--64-gree.svg)
 
-基于[google/breakpad](https://github.com/google/breakpad)的Android Native 异常捕获库，在native层发生异常时java层能得到相关异常信息。
+基于 [google/breakpad](https://github.com/google/breakpad) 的 Android Native 异常捕获库，在 native 层发生异常时java层能得到相关异常信息。
+
+# 接入使用
+
+1. 依赖地址
+
+   根项目的build.gradle中:
+
+   ~~~groovy
+   allprojects {
+       repositories {
+           mavenCentral()//添加这一行
+       }
+   }
+   ~~~
+
+   模块的build.gradle中：
+
+   ~~~groovy
+   dependencies {   
+       //添加这一行, releaseVersion 填最新的版本， 注意无需添加 V
+   	implementation 'io.github.heart-beats.crash:android-crash:releaseVersion'
+   }
+   ~~~
+2. 初始化
+
+   ```kotlin
+   val crashDir = this.getExternalFilesDir(null)
+   val nativeCrashDir = File(crashDir, "nativeCrash")
+   val javCrashDir = File(crashDir, "javaCrash")
+
+   // 传入路径参数时，崩溃时会在对应目录下产生崩溃相关日志文件， 不传只有回调输出
+   val androidCrash = AndroidCrash.Build(this)
+       .addJavaCrashListener(/*javCrashDir.absolutePath, */) { javaCrashInfo ->
+           Log.d(TAG, "onCrash: $javaCrashInfo")
+       }
+       .addNativeCrashListener(/*nativeCrashDir.absolutePath,*/) { nativeCrashInfo ->
+           Log.d(TAG, "onCrash: $nativeCrashInfo")
+           nativeCrashInfo.formatPrint(TAG)
+       }
+       .build()
+   ```
+3. 示例项目
+
+   点击查看：[示例项目](https://github.com/Heart-Beats/AndroidCrash/tree/main/app)
 
 # 现状
 
-+ 发生native异常时，安卓系统会将native异常信息输出到logcat中，但是java层无法感知到native异常的发生，进而无法获取这些异常信息并上报到业务的异常监控系统。
-+ 业务部门可以快速实现java层的异常监控系统（java层全局异常捕获的实现很简单），又或者业务部门已经实现了java层的异常监控系统，但没有覆盖到native层的异常捕获。
-+ 安卓还可以接入Breakpad，其导出的minidump文件不仅体积小信息还全，但有两个问题：
++ 发生 native 异常时，安卓系统会将 native 异常信息输出到 logcat 中，但是 java 层无法感知到 native 异常的发生，进而无法获取这些异常信息并上报到业务的异常监控系统。
++ 业务部门可以快速实现 java 层的异常监控系统（ java 层全局异常捕获的实现很简单），又或者业务部门已经实现了 java 层的异常监控系统，但没有覆盖到 native 层的异常捕获。
++ 安卓还可以接入 Breakpad，其导出的 minidump 文件不仅体积小信息还全，但有两个问题：
   + 1.和现状第1点的问题相同。
-  + 2.：需要拉取minidump文件并经过比较繁琐的步骤才可以得出有用的信息：
-    + 启动时检测Breakpad是否有导出过minidump文件，有则说明发生过native异常。
-    + 到客户现场，或者远程拉取minidump文件。
-    + 编译出自己电脑的操作系统的minidump_stackwalk工具。
-    + 使用minidump_stackwalk工具翻译minidump文件内容，例如拿到崩溃时的程序计数器寄存器内的值（下文称为pc值）。
-    + 找到对应崩溃so库ABI的add2line工具，并根据上一步拿到的pc值定位出发生异常的代码行数。
+  + 2.：需要拉取 minidump 文件并经过比较繁琐的步骤才可以得出有用的信息：
+    + 启动时检测 Breakpad 是否有导出过 minidump 文件，有则说明发生过 native 异常。
+    + 到客户现场，或者远程拉取 minidump 文件。
+    + 编译出自己电脑的操作系统的 minidump_stackwalk 工具。
+    + 使用 minidump_stackwalk 工具翻译 minidump 文件内容，例如拿到崩溃时的程序计数器寄存器内的值（下文称为 pc 值）。
+    + 找到对应崩溃 so 库 ABI 的 add2line 工具，并根据上一步拿到的pc值定位出发生异常的代码行数。
 
-整个步骤十分复杂和繁琐，且没有java层的crash线程栈信息，不利于java开发者快速定位调用native的代码。
+整个步骤十分复杂和繁琐，且没有 java 层的 crash 线程栈信息，不利于 java 开发者快速定位调用 native 的代码。
 
 # 设计意图
 
-1. 让java层有知悉native异常的通道：
-   + java开发者可以在java代码中得到native异常的情况，进而对native异常做出反应，而不是再次启动后去检测Breakpad是否有导出过minidump文件。
-2. 增加信息的可用性，进而提升问题分析的效率：
-   + 回调中提供naive异常信息、naive和java调用栈信息和minidump文件文件路径，这些信息可以直接通过业务部门的异常监控系统上报。
+1. 让 java 层有知悉 native 异常的通道：
 
-   + 划分为两个阶段解决问题，我预想是大部分都在阶段一解决了问题，而不需要再对minidump文件进行分析，总体来讲是提升了分析效率的：
-     + 阶段一：有了java的调用栈和native的调用栈信息，大部分异常原因都可以快速定位并分析出来。
-     + 阶段二：回调中也会提供minidump文件的存储路径，业务部门可以按需拉取。（这一步需要业务部门本身有拉取日志的功能，且需要按上文”现状部分进行操作”，较费时费力）
+   + java 开发者可以在 java 代码中得到 native 异常的情况，进而对 native 异常做出反应，而不是再次启动后去检测 Breakpad 是否有导出过 minidump 文件。
+2. 增加信息的可用性，进而提升问题分析的效率：
+
+   + 回调中提供 naive 异常信息、naive 和 java 调用栈信息和 minidump 文件文件路径，这些信息可以直接通过业务部门的异常监控系统上报。
+   + 划分为两个阶段解决问题，我预想是大部分都在阶段一解决了问题，而不需要再对 minidump 文件进行分析，总体来讲是提升了分析效率的：
+
+     + 阶段一：有了 java 的调用栈和 native 的调用栈信息，大部分异常原因都可以快速定位并分析出来。
+     + 阶段二：回调中也会提供 minidump 文件的存储路径，业务部门可以按需拉取。（这一步需要业务部门本身有拉取日志的功能，且需要按上文”现状部分进行操作”，较费时费力）
 3. 最少改动：
-   + 让接入方不因为引入新功能而大量改动现有代码。例如：在native崩溃回调处,使用现有的java层异常监控系统上报native异常信息。
+
+   + 让接入方不因为引入新功能而大量改动现有代码。例如：在 native崩溃回调处,使用现有的 java 层异常监控系统上报 native 异常信息。
 4. 单一职责：
-   + 只做native的crash捕获，不做系统内存情况、cpu使用率、系统日志等信息的采集功能。
+
+   + 只做 native 的 crash 捕获，不做系统内存情况、cpu 使用率、系统日志等信息的采集功能。
 
 # 整体流程
- 图片要是无法显示，请使用梯子！！！
+
+图片要是无法显示，请使用梯子！！！
 
 ![image](https://github.com/BAByte/NativeCrash2Java/blob/main/pic/flow.png?raw=true)
 
 # 功能介绍
 
-+ 保留breakpad导出minidump文件功能 （可选择是否启用）
-+ 发生native异常时将异常信息、native层调用栈、java层的调用栈通过回调提供给开发者，将这些信息输出到控制台的效果如下：
-
++ 保留 breakpad 导出 minidump 文件功能 （可选择是否启用）
++ 发生 native 异常时将异常信息、native 层调用栈、java 层的调用栈通过回调提供给开发者，将这些信息输出到控制台的效果如下：
 
 ~~~bash
 2022-02-14 11:33:08.598 30228-30253/com.babyte.banativecrash E/androidCrash:  
@@ -102,9 +149,9 @@
 
 ## 定位到so中具体代码行示例
 
-可以使用ndk中的add2line工具根据pc值和带符号信息的so库，定位出具体代码行数。
+可以使用 ndk 中的 add2line 工具根据 pc 值和带符号信息的 so 库，定位出具体代码行数。
 
-例：从上文的异常信息中可以看到abi是aarch64，对应的so库abi是arm64，所以add2line的使用如下：
+例：从上文的异常信息中可以看到 abi 是 aarch64，对应的 so 库 abi 是 arm64，所以 add2line 的使用如下：
 
 ~~~shell
 $ ./ndk/android-ndk-r16b/toolchains/aarch64-linux-android-4.9/prebuilt/darwin-x86_64/bin/aarch64-linux-android-addr2line -Cfe ~/arm64-v8a/libnative-lib.so 0000000000000650
@@ -117,51 +164,6 @@ Crash()
 /Users/ba/AndroidStudioProjects/NativeCrash2Java/app/.cxx/cmake/debug/arm64-v8a/../../../../src/main/cpp/native-lib.cpp:6
 ~~~
 
-# 接入方式
-
-根项目的build.gradle中:
-
-~~~groovy
-allprojects {
-    repositories {
-        mavenCentral()//添加这一行
-    }
-}
-~~~
-
-模块的build.gradle中：
-
-~~~groovy
-dependencies {   
-    //添加这一行,releaseVersionCode填最新的版本
-	implementation 'io.github.BAByte:native-androidCrash:releaseVersionCode@aar'
-}
-~~~
-
-# 初始化
-
-两种模式可选：
-
-~~~kotlin
-//发生native异常时:回调异常信息并导出minidump到指定目录，
-BaByteBreakpad.initBreakpad(this.cacheDir.absolutePath) { info:CrashInfo ->
-    //格式化输出到控制台
-    BaByteBreakpad.formatPrint(TAG, info)
-}
-
-//发生native异常时:回调异常信息
-BaByteBreakpad.initBreakpad { info:CrashInfo ->
-    //格式化输出到控制台
-    BaByteBreakpad.formatPrint(TAG, info)
-}
-~~~
-
-# 示例项目
-
-点击查看：[示例项目](https://github.com/BAByte/NativeCrash2Java/tree/main/app)
-
 # 致谢
 
-+ 感谢google breakpad库提供的源码
-+ 感谢腾讯bugly团队提供在发生异常时，native回调java层的思路
-+ 感谢爱奇艺xCrash库源码中的dlopen思路
++ 感谢 [NativeCrash2Java](https://github.com/BAByte/NativeCrash2Java) 库提供的 Native 崩溃通知 Java 层的实现
