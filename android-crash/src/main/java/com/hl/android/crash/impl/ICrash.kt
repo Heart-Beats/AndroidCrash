@@ -10,5 +10,5 @@ interface ICrash {
 	 * @param crashLogDir 崩溃日志存储目录
 	 * @param onCrashListener 崩溃监听回调处理
 	 */
-	fun init(context: Context, crashLogDir: String?, onCrashListener: OnCrashListener)
+	fun init(context: Context, crashLogDir: String?, onCrashListener: OnCrashListener?)
 }

@@ -9,7 +9,7 @@ import java.io.File
 
 class NativeCrashImp : ICrash {
 
-	override fun init(context: Context, crashLogDir: String?, onCrashListener: OnCrashListener) {
+	override fun init(context: Context, crashLogDir: String?, onCrashListener: OnCrashListener?) {
 		if (crashLogDir != null) {
 			File(crashLogDir).run {
 				if (!exists()) {
@@ -19,9 +19,9 @@ class NativeCrashImp : ICrash {
 			}
 		}
 
-		val onNativeCrashListener = onCrashListener as OnNativeCrashListener
+		val onNativeCrashListener = onCrashListener as OnNativeCrashListener?
 		initBreakpad(crashLogDir) {
-			onNativeCrashListener.onCrash(it)
+			onNativeCrashListener?.onCrash(it)
 		}
 	}
 

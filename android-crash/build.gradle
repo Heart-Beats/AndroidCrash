@@ -80,7 +80,7 @@ tasks.whenTaskAdded { Task task ->
 }
 
 dependencies {
-    if (isUseRemote) {
+    if (isUseRemote.toBoolean()) {
         implementation "${rootProject.ext.module_group}:breakpad-android:${rootProject.ext.getPublishVersion()}"
     } else {
         implementation project(":breakpad-android")

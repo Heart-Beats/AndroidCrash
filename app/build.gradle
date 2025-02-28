@@ -60,7 +60,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
-    if (isUseRemote) {
+    if (isUseRemote.toBoolean()) {
         implementation "${rootProject.ext.module_group}:android-crash:${rootProject.ext.getPublishVersion()}"
     } else {
         implementation project(":android-crash")

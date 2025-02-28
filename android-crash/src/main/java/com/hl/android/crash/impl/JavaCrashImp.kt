@@ -27,8 +27,8 @@ class JavaCrashImp : ICrash {
 	 *
 	 * @param context
 	 */
-	override fun init(context: Context, crashLogDir: String?, onCrashListener: OnCrashListener) {
-		val onJavaCrashListener = onCrashListener as OnJavaCrashListener
+	override fun init(context: Context, crashLogDir: String?, onCrashListener: OnCrashListener?) {
+		val onJavaCrashListener = onCrashListener as OnJavaCrashListener?
 
 		handleUncaughtException(context, crashLogDir, onJavaCrashListener)
 	}
@@ -37,7 +37,7 @@ class JavaCrashImp : ICrash {
 	/**
 	 * 处理未捕获的异常
 	 */
-	private fun handleUncaughtException(context: Context, crashLogDir: String?, javaCrashCallBack: OnJavaCrashListener) {
+	private fun handleUncaughtException(context: Context, crashLogDir: String?, javaCrashCallBack: OnJavaCrashListener?) {
 		// 获取系统默认或已设置的 UncaughtException 处理器
 		val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
 
@@ -45,7 +45,7 @@ class JavaCrashImp : ICrash {
 			try {
 				handleException(context, thread, ex, crashLogDir) { crashLogPath, stackTraceString, throwable ->
 					val javaCrashInfo = JavaCrashInfo(crashLogPath, stackTraceString, throwable)
-					javaCrashCallBack.onCrash(javaCrashInfo)
+					javaCrashCallBack?.onCrash(javaCrashInfo)
 				}
 			} catch (e: Exception) {
 				Log.e(TAG, "handleUncaughtException  异常...", e)

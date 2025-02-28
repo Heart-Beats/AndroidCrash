@@ -26,11 +26,19 @@ public class AndroidCrash {
 
 
     private void initCaptureJavaCrash(String javaCrashLogDir, OnJavaCrashListener onJavaCrashListener) {
+        if (javaCrashLogDir == null && onJavaCrashListener == null) {
+            return;
+        }
+
         ICrash iCrash = new JavaCrashImp();
         iCrash.init(context, javaCrashLogDir, onJavaCrashListener);
     }
 
     private void initCaptureNativeCrash(String nativeCrashDumpDir, OnNativeCrashListener onNativeCrashListener) {
+        if (nativeCrashDumpDir == null && onNativeCrashListener == null) {
+            return;
+        }
+
         ICrash nativeCrashImp = new NativeCrashImp();
         nativeCrashImp.init(context, nativeCrashDumpDir, onNativeCrashListener);
     }
@@ -63,6 +71,11 @@ public class AndroidCrash {
             this.context = context;
         }
 
+        public Build addJavaCrashListener(String crashLogDir) {
+            this.javaCrashLogDir = crashLogDir;
+            return this;
+        }
+
         public Build addJavaCrashListener(OnJavaCrashListener onCrashListener) {
             this.onJavaCrashListener = onCrashListener;
             return this;
@@ -71,6 +84,11 @@ public class AndroidCrash {
         public Build addJavaCrashListener(String crashLogDir, OnJavaCrashListener onCrashListener) {
             this.javaCrashLogDir = crashLogDir;
             this.onJavaCrashListener = onCrashListener;
+            return this;
+        }
+
+        public Build addNativeCrashListener(String dumpDir) {
+            this.nativeCrashDumpDir = dumpDir;
             return this;
         }
 
