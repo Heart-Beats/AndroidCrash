@@ -60,44 +60,44 @@ public class AndroidCrash {
     }
 
 
-    public static class Build {
+    public static class Builder {
         private String javaCrashLogDir;
         private String nativeCrashDumpDir;
         private final Context context;
         private OnJavaCrashListener onJavaCrashListener;
         private OnNativeCrashListener onNativeCrashListener;
 
-        public Build(Context context) {
+        public Builder(Context context) {
             this.context = context;
         }
 
-        public Build addJavaCrashListener(String crashLogDir) {
+        public Builder addJavaCrashListener(String crashLogDir) {
             this.javaCrashLogDir = crashLogDir;
             return this;
         }
 
-        public Build addJavaCrashListener(OnJavaCrashListener onCrashListener) {
+        public Builder addJavaCrashListener(OnJavaCrashListener onCrashListener) {
             this.onJavaCrashListener = onCrashListener;
             return this;
         }
 
-        public Build addJavaCrashListener(String crashLogDir, OnJavaCrashListener onCrashListener) {
+        public Builder addJavaCrashListener(String crashLogDir, OnJavaCrashListener onCrashListener) {
             this.javaCrashLogDir = crashLogDir;
             this.onJavaCrashListener = onCrashListener;
             return this;
         }
 
-        public Build addNativeCrashListener(String dumpDir) {
+        public Builder addNativeCrashListener(String dumpDir) {
             this.nativeCrashDumpDir = dumpDir;
             return this;
         }
 
-        public Build addNativeCrashListener(OnNativeCrashListener onNativeCrashListener) {
+        public Builder addNativeCrashListener(OnNativeCrashListener onNativeCrashListener) {
             this.onNativeCrashListener = onNativeCrashListener;
             return this;
         }
 
-        public Build addNativeCrashListener(String dumpDir, OnNativeCrashListener onNativeCrashListener) {
+        public Builder addNativeCrashListener(String dumpDir, OnNativeCrashListener onNativeCrashListener) {
             this.nativeCrashDumpDir = dumpDir;
             this.onNativeCrashListener = onNativeCrashListener;
             return this;

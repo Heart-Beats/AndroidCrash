@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         val nativeCrashDir = File(crashDir, "nativeCrash")
         val javCrashDir = File(crashDir, "javaCrash")
 
-        val androidCrash = AndroidCrash.Build(this)
+        val androidCrash = AndroidCrash.Builder(this)
             .addJavaCrashListener(/*javCrashDir.absolutePath, */) { javaCrashInfo ->
                 Log.d(TAG, "onCrash: $javaCrashInfo")
             }
